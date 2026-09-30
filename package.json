@@ -1,0 +1,19 @@
+{
+  "name": "swarm-slayer-titan-raid",
+  "private": true,
+  "version": "1.1.0",
+  "type": "module",
+  "description": "Swarm Slayer: 3D Titan Raid - A fast-paced 3D swarm runner with 10 epic boss fights and rainbow multiplier pyramid stairs.",
+  "scripts": {
+    "dev": "vite --host --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --host --port 4173",
+    "package": "vite build && powershell -Command \"Compress-Archive -Path dist/* -DestinationPath swarm-slayer-titan-raid.zip -Force\""
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

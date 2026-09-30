@@ -1,0 +1,752 @@
+/* ========================================================================
+   Count Control Legends - clone UI
+   All visuals are procedural / original; no third-party assets are used.
+   ===================================================================== */
+
+:root {
+  --blue: #2f8fff;
+  --blue-dark: #1663c4;
+  --green: #35c15a;
+  --green-dark: #22913f;
+  --red: #ef4444;
+  --gold: #ffc531;
+  --ink: #12243b;
+  --panel: #ffffff;
+  --shadow: 0 6px 0 rgba(0, 0, 0, 0.18), 0 14px 26px rgba(0, 0, 0, 0.24);
+  --ui-font: "Baloo 2", "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #101a28;
+  font-family: var(--ui-font);
+  color: var(--ink);
+  user-select: none;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.layer.screen {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: radial-gradient(circle at 50% 35%, rgba(6, 18, 34, 0.35), rgba(6, 18, 34, 0.78));
+  backdrop-filter: blur(2px);
+  padding: 20px;
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ------------------------------ logo ------------------------------ */
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.86;
+  margin-bottom: 6px;
+  transform: rotate(-3deg);
+}
+
+.logo span {
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  /* em-based stroke keeps the same relative weight on every line, even
+     though each line has its own clamp()'d font-size */
+  -webkit-text-stroke: 0.105em #11243c;
+  paint-order: stroke fill;
+  text-shadow: 0 7px 0 rgba(0, 0, 0, 0.3);
+}
+
+.logo .logo-count {
+  font-size: clamp(38px, 9vw, 76px);
+  color: #ffd84d;
+}
+
+.logo .logo-control {
+  font-size: clamp(30px, 7.2vw, 60px);
+  color: #ff7b3d;
+}
+
+.logo .logo-legends {
+  font-size: clamp(26px, 6.2vw, 52px);
+  color: #57d9ff;
+}
+
+.logo.small .logo-count {
+  font-size: clamp(26px, 6vw, 44px);
+}
+
+.logo.small .logo-control {
+  font-size: clamp(22px, 5vw, 36px);
+}
+
+.logo.small .logo-legends {
+  font-size: clamp(18px, 4.4vw, 30px);
+}
+
+/* ------------------------------ buttons ------------------------------ */
+.big-btn,
+.small-btn,
+.icon-btn {
+  font-family: inherit;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  text-transform: uppercase;
+  transition: transform 0.08s ease, filter 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* glossy top highlight - the thing that reads as "finished" on mobile-game buttons */
+.big-btn::after,
+.small-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+.big-btn {
+  min-width: 232px;
+  padding: 16px 30px;
+  font-size: 22px;
+  letter-spacing: 1.5px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #4aa6ff, var(--blue));
+  box-shadow: 0 6px 0 var(--blue-dark), 0 14px 22px rgba(0, 0, 0, 0.32);
+}
+
+.big-btn.green {
+  background: linear-gradient(180deg, #4ade80, var(--green));
+  box-shadow: 0 6px 0 var(--green-dark), 0 14px 22px rgba(0, 0, 0, 0.32);
+}
+
+.big-btn:active,
+.small-btn:active {
+  transform: translateY(4px);
+  filter: brightness(1.05);
+}
+
+.small-btn {
+  padding: 11px 20px;
+  font-size: 15px;
+  border-radius: 14px;
+  letter-spacing: 1px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* small buttons default to a light-on-dark look; inside white panels they need ink text */
+.panel .small-btn {
+  color: var(--ink);
+  background: #e3ecf7;
+  border-color: #c5d5e8;
+  box-shadow: 0 3px 0 #b3c5db;
+  backdrop-filter: none;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 14px;
+  background: rgba(10, 26, 44, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: grid;
+  place-items: center;
+}
+
+.play-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ------------------------------ menu ------------------------------ */
+.menu-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.menu-stats .stat {
+  min-width: 92px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+}
+
+.menu-stats .stat b {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.menu-stats .stat span {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  opacity: 0.8;
+}
+
+.menu-row {
+  display: flex;
+  gap: 10px;
+}
+
+.menu-hint {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  max-width: 330px;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+/* ------------------------------ panels ------------------------------ */
+.panel {
+  background: linear-gradient(180deg, #ffffff, #eef4fb);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+  max-width: min(520px, 92vw);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-height: 88vh;
+  overflow: auto;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.panel h2::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+}
+
+/* ------------------------------ hud ------------------------------ */
+.hud-top {
+  position: absolute;
+  top: max(10px, env(safe-area-inset-top));
+  left: 12px;
+  right: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.progress-wrap {
+  flex: 1;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-track {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 3px solid rgba(18, 36, 59, 0.75);
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.18);
+}
+
+.progress-fill {
+  position: absolute;
+  inset: 0;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #58c4ff, #2f8fff);
+  transition: width 0.12s linear;
+}
+
+.progress-fill::after,
+.boss-fill::after,
+.skin-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 50%);
+}
+
+.progress-runner {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--blue);
+  border: 3px solid #11243c;
+  display: grid;
+  place-items: center;
+  transition: left 0.12s linear;
+}
+
+.progress-flag {
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translate(50%, -50%);
+  font-size: 18px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.4));
+}
+
+.level-chip {
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  color: #fff;
+  background: rgba(10, 26, 44, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.coin-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+  font-size: 16px;
+  color: #fff;
+  background: rgba(10, 26, 44, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  padding: 6px 12px;
+  border-radius: 999px;
+  min-width: 74px;
+  justify-content: center;
+}
+
+.coin-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff3c4, #ffe27a 35%, var(--gold) 68%, #d99a09);
+  border: 2px solid #a76f05;
+  box-shadow: inset 0 -2px 2px rgba(0, 0, 0, 0.15);
+  display: inline-block;
+}
+
+/* ------------------------------ boss bar ------------------------------ */
+.boss-bar {
+  position: absolute;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(380px, 84vw);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(10, 26, 44, 0.6);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+}
+
+.boss-name {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #ffd4d4;
+}
+
+.boss-track {
+  flex: 1;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.boss-fill {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff8080, #e11d48);
+  transition: width 0.1s linear;
+}
+
+.boss-hp {
+  font-weight: 900;
+  color: #fff;
+  font-size: 14px;
+  min-width: 46px;
+  text-align: right;
+}
+
+/* ------------------------------ combo feed ------------------------------ */
+.combo-feed {
+  position: absolute;
+  left: 50%;
+  top: 25%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.combo-feed .pop {
+  font-weight: 900;
+  font-size: 30px;
+  color: #fff;
+  -webkit-text-stroke: 5px #11243c;
+  paint-order: stroke fill;
+  animation: popfade 0.95s ease-out forwards;
+}
+
+.combo-feed .pop.good {
+  color: #7dfca0;
+}
+
+.combo-feed .pop.bad {
+  color: #ff9a9a;
+}
+
+.combo-feed .pop.gold {
+  color: #ffd84d;
+}
+
+@keyframes popfade {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.6);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0) scale(1.15);
+  }
+  60% {
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.95);
+  }
+}
+
+/* ------------------------------ tutorial ------------------------------ */
+.tutorial {
+  position: absolute;
+  left: 18px;
+  top: 40%;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(10, 26, 44, 0.5);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.tut-title {
+  font-size: 14px;
+  letter-spacing: 2px;
+  font-weight: 900;
+}
+
+.tut-keys {
+  display: flex;
+  gap: 6px;
+}
+
+.tut-keys span {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+}
+
+.tut-mouse {
+  font-size: 11px;
+  opacity: 0.85;
+  letter-spacing: 1px;
+}
+
+/* ------------------------------ complete / fail ------------------------------ */
+.complete-banner,
+.fail-banner {
+  font-size: clamp(26px, 6vw, 44px);
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+  -webkit-text-stroke: 6px #11243c;
+  paint-order: stroke fill;
+  background: linear-gradient(180deg, #4ade80, #22c55e);
+  padding: 10px 34px;
+  border-radius: 14px;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25);
+}
+
+.fail-banner {
+  background: linear-gradient(180deg, #fb7185, #e11d48);
+}
+
+.complete-coins {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 900;
+  color: #ffe27a;
+  -webkit-text-stroke: 4px #11243c;
+  paint-order: stroke fill;
+}
+
+.complete-detail,
+.fail-detail {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* ------------------------------ skins ------------------------------ */
+.skin-progress {
+  width: min(320px, 86vw);
+  background: rgba(10, 26, 44, 0.55);
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.panel .skin-progress {
+  background: #eaf1fa;
+  border-color: #cfdced;
+}
+
+.skin-progress-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.panel .skin-progress-label {
+  color: var(--ink);
+}
+
+.skin-progress-track {
+  position: relative;
+  height: 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.panel .skin-progress-track {
+  background: #d7e3f1;
+}
+
+.skin-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: linear-gradient(90deg, #86efac, #22c55e);
+  transition: width 0.4s ease;
+}
+
+.skin-progress-track span {
+  position: relative;
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+  -webkit-text-stroke: 3px rgba(17, 36, 60, 0.85);
+  paint-order: stroke fill;
+}
+
+.skin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.skin-card {
+  border-radius: 16px;
+  padding: 8px 6px;
+  background: #f3f7fc;
+  border: 3px solid #d8e3f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 0.6px;
+  color: var(--ink);
+}
+
+.skin-card.selected {
+  border-color: var(--green);
+  background: #eafbef;
+}
+
+.skin-card.locked {
+  opacity: 0.75;
+}
+
+.skin-swatch {
+  width: 38px;
+  height: 46px;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.16);
+}
+
+.skin-cost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #6b7f96;
+}
+
+/* ------------------------------ loading ------------------------------ */
+.load-track {
+  width: min(320px, 70vw);
+  height: 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  overflow: hidden;
+}
+
+.load-fill {
+  height: 100%;
+  width: 8%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #58c4ff, #2f8fff);
+  transition: width 0.25s ease;
+}
+
+.load-text {
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 3px;
+  font-size: 13px;
+}
+
+@media (max-width: 520px) {
+  .big-btn {
+    min-width: 200px;
+    padding: 14px 24px;
+    font-size: 19px;
+  }
+  .tutorial {
+    left: 10px;
+    padding: 9px 10px;
+  }
+  .boss-bar {
+    top: 68px;
+  }
+}

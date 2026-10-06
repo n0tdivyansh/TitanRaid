@@ -1,4 +1,4 @@
-# Swarm Slayer: Titan Raid - 3D Swarm Runner
+# Titan Raid - 3D Crowd Runner
 
 A fast-paced, browser-native 3D crowd-runner: steer a growing army of runners through math gates, dodge hazards, smash through enemy squads, defeat the boss at the finish line, then stack the crew into a pyramid and launch it up the rainbow multiplier stairs.
 
@@ -11,12 +11,12 @@ npm install
 npm run dev        # local dev server with CrazyGames SDK fallback
 npm run build      # production bundle in dist/ (with relative base ./ for iframes)
 npm run preview    # preview production build locally
-npm run package    # builds dist/ and packages swarm-slayer-titan-raid.zip
+npm run package    # builds dist/ and packages titan-raid.zip
 ```
 
 ### CrazyGames Developer Portal Submission
 1. Run `npm run package`.
-2. Upload `swarm-slayer-titan-raid.zip` to the [CrazyGames Developer Portal](https://developer.crazygames.com/).
+2. Upload `titan-raid.zip` to the [CrazyGames Developer Portal](https://developer.crazygames.com/).
 3. The bundle includes CrazyGames SDK v3 lifecycle hooks, midgame interstitial ads, rewarded ads (+35% end reward, +250 free shop coins, revive +30 runners), happytime celebrations, and automatic audio/gameplay pause on tab switch.
 
 ## Controls
